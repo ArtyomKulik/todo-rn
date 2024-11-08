@@ -1,48 +1,48 @@
-import React from 'react'
-import { Pressable, Text, ViewStyle } from 'react-native'
+import React from "react";
+import { Dimensions, Pressable, StyleSheet } from "react-native";
+import { ThemedText } from "./ThemedText";
 
-
-export enum AppButtonVariants  {
-    ADD = 'ADD',
-    DELETE = 'DELETE'
+export enum AppButtonVariants {
+  ADD = "ADD",
+  DELETE = "DELETE",
 }
 
 export enum AppButtonSizes {
-    SMALL = 'small',
-    MEDIUM = 'medium'
+  SMALL = "small",
+  MEDIUM = "medium",
 }
-
 
 type AppButtonPropsType = {
-    buttonVariant: AppButtonVariants
-    buttonSize: AppButtonSizes 
-    buttonAction: () => void
-}
+  buttonVariant: AppButtonVariants;
+  buttonSize: AppButtonSizes;
+  buttonAction: () => void;
+  buttonText: string;
+};
 
 function AppButton(props: AppButtonPropsType) {
- 
-    const {buttonVariant,buttonSize, buttonAction} = props
+  const { buttonVariant, buttonSize, buttonAction, buttonText } = props;
 
-    const buttonText = buttonVariant === AppButtonVariants.ADD ? 'Добавить' : 'Удалить';
-    const buttonStyle: ViewStyle = {  backgroundColor: buttonVariant === AppButtonVariants.ADD ? 'green' : 'brown', 
-        width: buttonSize === AppButtonSizes.SMALL ? 60 : 100,
-        paddingHorizontal: 12,
-        paddingVertical: 16,
-        borderRadius: 5,
-        alignItems: 'center',
-        justifyContent: 'center'
-    };
-    const buttonTextStyle = {
-        color: '#e9decd'
-    }
+  const { width, height } = Dimensions.get("window");
+
+  const styles = StyleSheet.create({
+    buttonStyle: {
+      width: buttonSize === AppButtonSizes.SMALL ? width * 0.2 : width * 0.25,
+      height:
+        buttonSize === AppButtonSizes.SMALL ? height * 0.05 : height * 0.1,
+      backgroundColor:
+        buttonVariant === AppButtonVariants.ADD ? "#228B22" : "#A52A2A",
+      borderRadius: 10,
+      textAlign: "center",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+  });
 
   return (
-    
-      <Pressable style={buttonStyle} onPress={buttonAction}><Text style={buttonTextStyle}>{buttonText}</Text></Pressable>
-  )
+    <Pressable style={styles.buttonStyle} onPress={buttonAction}>
+      <ThemedText>{buttonText}</ThemedText>
+    </Pressable>
+  );
 }
 
-
-
-
-export default AppButton
+export default AppButton;

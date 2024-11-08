@@ -1,112 +1,166 @@
-import { Image, StyleSheet, Platform, Pressable, Text, FlatList, View, TextInput } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  FlatList,
+  TextInput,
+  ImageStyle,
+} from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import AppInput from '@/components/AppInput';
-import { useAppDispatch, useAppSelector } from '@/hooks/reduxHooks';
-import { addTask, deleteTask, setDescriptionInputVal, setNameInputVal } from '@/redux/todoSlice';
-import AppButton, { AppButtonSizes, AppButtonVariants } from '@/components/AppButton';
-import { useRef } from 'react';
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { ThemedView } from "@/components/ThemedView";
+import AppInput from "@/components/AppInput";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import {
+  addTask,
+  deleteTask,
+  setDescriptionInputVal,
+  setNameInputVal,
+} from "@/redux/todoSlice";
+import AppButton, {
+  AppButtonSizes,
+  AppButtonVariants,
+} from "@/components/AppButton";
+import { useRef } from "react";
+import { ThemedText } from "@/components/ThemedText";
 
 export default function HomeScreen() {
+  const dispatch = useAppDispatch();
 
-  const dispatch = useAppDispatch()
-
-  const tasks = useAppSelector((store) => store.todos.tasks)
+  const tasks = useAppSelector((store) => store.todos.tasks);
 
   const addTaskHandler = () => {
-    dispatch(addTask())
-  }
+    dispatch(addTask());
+  };
 
   const deleteTaskHandler = (id: number): void => {
-    dispatch(dispatch(deleteTask(id)))
-  }
+    dispatch(dispatch(deleteTask(id)));
+  };
 
   const titleInputRef = useRef<TextInput>(null);
   const descriptionInputRef = useRef<TextInput>(null);
 
-
-  
   const handleNameSubmit = () => {
-   descriptionInputRef.current?.focus();
-};
+    descriptionInputRef.current?.focus();
+  };
 
-
-  const nameStoreValue = useAppSelector((store) => store.todos.taskNameInputValue)
-  const descrStoreValue = useAppSelector((store) => store.todos.taskDescriptionValue)
+  const nameStoreValue = useAppSelector(
+    (store) => store.todos.taskNameInputValue,
+  );
+  const descrStoreValue = useAppSelector(
+    (store) => store.todos.taskDescriptionValue,
+  );
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
       headerImage={
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+          source={require("@/assets/images/partial-react-logo.png")}
+          style={styles.reactLogo as ImageStyle}
         />
-      }>
+      }
+    >
       <ThemedView style={styles.inputContainer}>
-         <View style={styles.inputBlocks}>
-      
-         <AppInput ref={titleInputRef}                 onSubmitEditing={handleNameSubmit}
- placeholder="It's always seems impossible untill it's done!" setInputState={(val) => dispatch(setNameInputVal(val))} value={nameStoreValue}/>
-         </View>
-         <View style={styles.inputBlocks}>
-        
-         <AppInput                 ref={descriptionInputRef}
- placeholder="Описание..." setInputState={(val) => dispatch(setDescriptionInputVal(val))} value={descrStoreValue} />
-         </View>
-         <AppButton buttonVariant={AppButtonVariants.ADD} buttonSize={AppButtonSizes.MEDIUM} buttonAction={addTaskHandler}/>
-         </ThemedView>
+        <ThemedView style={styles.inputColumn}>
+          <AppInput
+            ref={titleInputRef}
+            onSubmitEditing={handleNameSubmit}
+            placeholder="It's always seems impossible"
+            setInputState={(val) => dispatch(setNameInputVal(val))}
+            value={nameStoreValue}
+          />
 
-          <FlatList data={tasks}  keyExtractor={(item) => item.id.toString()} renderItem={({ item }) => (
-            <ThemedView style={styles.addedTaskBlock}>
-             <View style={styles.addedTaskBlockInside}>
-            <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.descr}>{item.descr}</Text>
-            </View>
-            <AppButton buttonVariant={AppButtonVariants.DELETE} buttonSize={AppButtonSizes.SMALL} buttonAction={() => deleteTaskHandler(item.id)}/>
+          <AppInput
+            ref={descriptionInputRef}
+            placeholder="Описание..."
+            setInputState={(val) => dispatch(setDescriptionInputVal(val))}
+            value={descrStoreValue}
+          />
+        </ThemedView>
+        <ThemedView style={styles.addBtn}>
+          <AppButton
+            buttonText="Добавить"
+            buttonVariant={AppButtonVariants.ADD}
+            buttonSize={AppButtonSizes.MEDIUM}
+            buttonAction={addTaskHandler}
+          />
+        </ThemedView>
+      </ThemedView>
+
+      <FlatList
+        data={tasks}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <ThemedView style={styles.addedTaskBlock}>
+            <ThemedView style={styles.addedTaskBlockInner}>
+              <ThemedText
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={styles.name}
+              >
+                {item.name}
+              </ThemedText>
+              <ThemedText
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={styles.descr}
+              >
+                {item.descr}
+              </ThemedText>
             </ThemedView>
-          )}
- />
-   
+            <ThemedView style={styles.deleteBtn}>
+              <AppButton
+                buttonText="Удалить"
+                buttonVariant={AppButtonVariants.DELETE}
+                buttonSize={AppButtonSizes.SMALL}
+                buttonAction={() => deleteTaskHandler(item.id)}
+              />
+            </ThemedView>
+          </ThemedView>
+        )}
+      />
     </ParallaxScrollView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+  },
   inputContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     padding: 16,
     marginBottom: 10,
-    borderWidth: 2,
-    borderColor: '#21313'
   },
-  inputBlocks: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginBottom: 8,
-  
+  inputColumn: {
+    flexDirection: "column",
   },
-  addedTaskBlock: {  
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+  addBtn: {
+    marginLeft: 10,
+  },
+  addedTaskBlock: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 30,
-      height: 100,
-      borderWidth: 1,
-      borderColor: '#000'
+    height: 100,
+    borderWidth: 1,
+    borderColor: "#000",
   },
-  addedTaskBlockInside: {
-       flexDirection: 'column',
+  addedTaskBlockInner: {
+    flexDirection: "column",
+    flexShrink: 1,
+  },
+  deleteBtn: {
+    marginLeft: 20,
   },
   name: {
-    fontSize: 20
+    fontSize: 20,
   },
   descr: {
-    fontSize: 14
+    fontSize: 14,
   },
-  reactLogo: {
-
-  }
+  reactLogo: {},
 });

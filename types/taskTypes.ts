@@ -1,7 +1,7 @@
 export type TaskType = {
-    id: number
-    name: string
-    descr: string
-}
+  id: number;
+  name: string;
+  descr: string;
+};
 
-export type TasksType = TaskType[]
+export type TasksType = TaskType[];
